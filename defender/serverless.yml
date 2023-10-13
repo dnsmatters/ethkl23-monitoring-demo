@@ -21,7 +21,6 @@ defender:
 resources:
   Resources:
     sentinels:
-      #  This sentinel monitors transactions in/out the fraudulent wallet used to steal the funds during the attack on June 23, 2023
       token-monitor:
         name: Token monitor
         type: BLOCK
