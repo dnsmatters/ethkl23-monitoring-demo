@@ -5,7 +5,7 @@ frameworkVersion: "3"
 provider:
   name: defender
   stage: ${env:ENVIRONMENT}
-  stackName: "${self:provider.stage}ethkldemo" # prepend stage name to be able to replicate between environments(e.g devzkSyncEra vs prodkSyncEra)
+  stackName: "${self:provider.stage}ethkldemo"
   ssot: false
 
 custom:
