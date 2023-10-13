@@ -1,0 +1,4 @@
+l1Network: "goerli"
+l2Network: "zksync-goerli"
+contractAddress: "0xF10e6df03e62D28c91Ea7e0F25426a3065CEd9C7"
+zkSyncProviderUrl: "https://zksync2-testnet.zksync.dev"

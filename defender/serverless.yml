@@ -1,0 +1,69 @@
+service: ethkldemo
+configValidationMode: error
+frameworkVersion: "3"
+
+provider:
+  name: defender
+  stage: ${env:ENVIRONMENT}
+  stackName: "${self:provider.stage}ethkldemo" # prepend stage name to be able to replicate between environments(e.g devzkSyncEra vs prodkSyncEra)
+  ssot: false
+
+custom:
+  config: ${file(./config.${env:NETWORK}.yml)}
+  abiFolder: "../abi"
+  securityMonitoringEmail: ${env:SECURITY_EMAIL}
+  securityMonitoringName: "Security Monitoring"
+
+defender:
+  key: ${env:DEFENDER_API_KEY}
+  secret: ${env:DEFENDER_API_SECRET}
+
+resources:
+  Resources:
+    sentinels:
+      #  This sentinel monitors transactions in/out the fraudulent wallet used to steal the funds during the attack on June 23, 2023
+      token-monitor:
+        name: Token monitor
+        type: BLOCK
+        network: "${self:custom.config.l2Network}"
+        addresses:
+          - ${self:custom.config.contractAddress}
+        paused: false
+        confirm-level: 1
+        notify-config:
+          channels:
+            - ${self:resources.Resources.notifications.security-monitoring-email}
+        conditions:
+          event:
+            - expression: null
+              signature: Paused(address)
+            - expression: null
+              signature: RoleAdminChanged(bytes32,bytes32,bytes32)
+            - expression: null
+              signature: RoleGranted(bytes32,address,address)
+            - expression: null
+              signature: RoleRevoked(bytes32,address,address)
+            - expression: null
+              signature: Unpaused(address)
+          function:
+            - expression: null
+              signature: burn(uint256)
+            - expression: null
+              signature: mint(address,uint256)
+        
+    secrets:
+      #stack secrets
+      stack:
+        zkSyncProviderUrl: ${self:custom.config.zkSyncProviderUrl}
+
+    notifications:
+      security-monitoring-email:
+        type: email
+        name: ${self:custom.securityMonitoringName}
+        config:
+          emails:
+            - ${self:custom.securityMonitoringEmail}
+        paused: false
+
+plugins:
+  - '@openzeppelin/defender-serverless'
