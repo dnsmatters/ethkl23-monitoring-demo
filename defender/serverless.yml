@@ -51,7 +51,6 @@ resources:
               signature: mint(address,uint256)
         
     secrets:
-      #stack secrets
       stack:
         zkSyncProviderUrl: ${self:custom.config.zkSyncProviderUrl}
 
